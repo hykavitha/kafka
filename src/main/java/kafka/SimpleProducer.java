@@ -3,14 +3,17 @@ package kafka;
 //import util.properties packages
 import java.util.Properties;
 
+
+
 //import simple producer packages
 import org.apache.kafka.clients.producer.Producer;
 
 //import KafkaProducer packages
 import org.apache.kafka.clients.producer.KafkaProducer;
-
+import org.apache.kafka.clients.producer.ProducerConfig;
 //import ProducerRecord packages
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.serialization.StringSerializer;
 
 //Create java class named “SimpleProducer”
 public class SimpleProducer {
@@ -18,13 +21,13 @@ public class SimpleProducer {
  public static void main(String[] args) throws Exception{
     
     // Check arguments length value
-    if(args.length == 0){
-       System.out.println("Enter topic name");
-       return;
-    }
+//    if(args.length == 0){
+//       System.out.println("Enter topic name");
+//       return;
+//    }
     
     //Assign topicName to string variable
-    String topicName = args[0].toString();
+    String topicName = "kakka-session"; //args[0].toString();
     
     // create instance for properties to access producer configs   
     Properties props = new Properties();
@@ -47,19 +50,24 @@ public class SimpleProducer {
     //The buffer.memory controls the total amount of memory available to the producer for buffering.   
     props.put("buffer.memory", 33554432);
     
-    props.put("key.serializer", 
-       "org.apache.kafka.common.serializa-tion.StringSerializer");
+    props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,StringSerializer.class.getName());
        
-    props.put("value.serializer", 
-       "org.apache.kafka.common.serializa-tion.StringSerializer");
+    props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, 
+    		StringSerializer.class.getName());
     
-    Producer<String, String> producer = new KafkaProducer
-       <String, String>(props);
+    Producer<String, String> producer = new KafkaProducer <String, String>(props);
           
-    for(int i = 0; i < 10; i++)
+    for(int i = 0; i < 10; i++) {
        producer.send(new ProducerRecord<String, String>(topicName, 
+    		   
           Integer.toString(i), Integer.toString(i)));
+    
+    System.out.println("Message sent on i: " +Integer.toString(i) );
+
              System.out.println("Message sent successfully");
+    }
              producer.close();
  }
+ 
+
 }
